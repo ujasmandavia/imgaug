@@ -807,11 +807,18 @@ class StochasticParameter(object):
             ax.set_title("\n".join(title_fragments))
         fig.tight_layout(pad=0)
 
-        with tempfile.NamedTemporaryFile(suffix=".png") as f:
-            # we don't add bbox_inches='tight' here so that
-            # draw_distributions_grid has an easier time combining many plots
-            fig.savefig(f.name)
-            data = imageio.imread(f)[..., 0:3]
+        with tempfile.NamedTemporaryFile(mode="wb+", suffix=".png") as f:
+            # We don't add bbox_inches='tight' here so that
+            # draw_distributions_grid has an easier time combining many plots.
+            # Note that we could also use 'f.name' here instead of 'f', but
+            # that fails on Windows.
+            fig.savefig(f, format="png")
+
+            # Just 'f' instead of 'f.name' strangely produces an error that
+            # the file was not a png image here.
+            data = imageio.imread(
+                f.name, pilmode="RGB", format="png"
+            )[..., 0:3]
 
         plt.close()
 
