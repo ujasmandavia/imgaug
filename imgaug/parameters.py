@@ -814,10 +814,11 @@ class StochasticParameter(object):
             # that fails on Windows.
             fig.savefig(f, format="png")
 
-            # Just 'f' instead of 'f.name' strangely produces an error that
-            # the file was not a png image here.
+            # Use f.seek() here, because otherwise we get an error that
+            # the file was not a png image.
+            f.seek(0)
             data = imageio.imread(
-                f.name, pilmode="RGB", format="png"
+                f, pilmode="RGB", format="png"
             )[..., 0:3]
 
         plt.close()
